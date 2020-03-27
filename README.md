@@ -1,5 +1,10 @@
 # SupplyChain by Konstantin Ullrich
 ## Project WriteUp
+### Libraries used
+The only Library used was `truffle-hdwallet-provider` to deploy the Smart Contracts to the Rinkeby Testnet.
+
+### Usage of IPFS
+The IPFS (Interplanetary File System) wasn't used for this project, but it should be used for similar projects to provide a fully decentralized service. It wasn't used because I considered it out of Scope.
 
 ## Deployd on the Rinkeby Testnet
 - [SupplyChain](https://rinkeby.etherscan.io/address/0x723a3f601bc22893a80b0e96f437587f72af9f79) ([Transation](https://rinkeby.etherscan.io/tx/0xb3312accbf9c19673fbd2cf39c1e5dd1bed8d0ad8cc4a266afee39f3dd1aea76))
