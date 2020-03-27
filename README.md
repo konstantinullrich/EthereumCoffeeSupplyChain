@@ -1,5 +1,7 @@
 # SupplyChain by Konstantin Ullrich
 ## Project WriteUp
+The UML-Diagrams are in `./images`
+
 ### Libraries used
 The only Library used was `truffle-hdwallet-provider` to deploy the Smart Contracts to the Rinkeby Testnet using infura.
 
