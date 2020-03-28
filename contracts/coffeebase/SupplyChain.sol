@@ -1,9 +1,13 @@
 pragma solidity ^0.4.24;
-// Define a contract 'Supplychain'
-contract SupplyChain {
 
-  // Define 'owner'
-  address owner;
+import '../coffeecore/Ownable.sol';
+import '../coffeeaccesscontrol/DistributorRole.sol';
+import '../coffeeaccesscontrol/ConsumerRole.sol';
+import '../coffeeaccesscontrol/RetailerRole.sol';
+import '../coffeeaccesscontrol/FarmerRole.sol';
+
+// Define a contract 'Supplychain'
+contract SupplyChain is Ownable, FarmerRole, RetailerRole, DistributorRole, ConsumerRole {
 
   // Define a variable called 'upc' for Universal Product Code (UPC)
   uint  upc;
@@ -60,12 +64,6 @@ contract SupplyChain {
   event Shipped(uint upc);
   event Received(uint upc);
   event Purchased(uint upc);
-
-  // Define a modifer that checks to see if msg.sender == owner of the contract
-  modifier onlyOwner() {
-    require(msg.sender == owner, "You are not the owner!");
-    _;
-  }
 
   // Define a modifer that verifies the Caller
   modifier verifyCaller(address _address) {
@@ -139,14 +137,13 @@ contract SupplyChain {
   // and set 'sku' to 1
   // and set 'upc' to 1
   constructor() public payable {
-    owner = msg.sender;
     sku = 1;
     upc = 1;
   }
 
   // Define a function 'kill' if required
   function kill() public onlyOwner {
-    selfdestruct(owner);
+    selfdestruct(msg.sender);
   }
 
   // Define a function 'harvestItem' that allows a farmer to mark an item 'Harvested'
@@ -158,7 +155,9 @@ contract SupplyChain {
     string memory _originFarmLatitude,
     string memory _originFarmLongitude,
     string memory _productNotes
-  ) public {
+  )
+  onlyFarmer
+  public {
     // Add the new item as part of Harvest
     items[_upc] = Item({
       sku: sku,
@@ -236,6 +235,7 @@ contract SupplyChain {
     paidEnough(items[_upc].productPrice)
     // Call modifer to send any excess ether back to buyer
     checkValue(_upc)
+    onlyDistributor
     {
     // Update the appropriate fields - ownerID, distributorID, itemState
     items[_upc].ownerID = msg.sender;
@@ -269,6 +269,7 @@ contract SupplyChain {
   function receiveItem(uint _upc) public
     // Call modifier to check if upc has passed previous supply chain stage
     shipped(_upc)
+    onlyRetailer
     // Access Control List enforced by calling Smart Contract / DApp
     {
     // Update the appropriate fields - ownerID, retailerID, itemState
@@ -285,6 +286,7 @@ contract SupplyChain {
   function purchaseItem(uint _upc) public
     // Call modifier to check if upc has passed previous supply chain stage
     received(_upc)
+    onlyConsumer
     // Access Control List enforced by calling Smart Contract / DApp
     {
     // Update the appropriate fields - ownerID, consumerID, itemState

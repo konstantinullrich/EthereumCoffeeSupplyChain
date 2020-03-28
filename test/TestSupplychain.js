@@ -41,6 +41,16 @@ contract('SupplyChain', function(accounts) {
     console.log("Retailer: accounts[3] ", retailerID);
     console.log("Consumer: accounts[4] ", consumerID);
 
+    // Setup Roles for testing
+    before(async() => {
+        const supplyChain = await SupplyChain.deployed();
+        
+        await supplyChain.addFarmer(originFarmerID);
+        await supplyChain.addDistributor(distributorID);
+        await supplyChain.addRetailer(retailerID);
+        await supplyChain.addConsumer(consumerID);
+    });
+    
     // 1st Test
     it("Testing smart contract function harvestItem() that allows a farmer to harvest coffee", async() => {
         const supplyChain = await SupplyChain.deployed();
@@ -55,7 +65,18 @@ contract('SupplyChain', function(accounts) {
         });
 
         // Mark an item as Harvested by calling function harvestItem()
-        await supplyChain.harvestItem(upc, originFarmerID, originFarmName, originFarmInformation, originFarmLatitude, originFarmLongitude, productNotes);
+        await supplyChain.harvestItem(
+            upc, 
+            originFarmerID, 
+            originFarmName, 
+            originFarmInformation, 
+            originFarmLatitude, 
+            originFarmLongitude, 
+            productNotes,
+            { 
+                from: originFarmerID 
+            }
+        );
 
         // Retrieve the just now saved item from blockchain by calling function fetchItem()
         const resultBufferOne = await supplyChain.fetchItemBufferOne.call(upc);
